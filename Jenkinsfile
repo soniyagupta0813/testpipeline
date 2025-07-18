@@ -21,15 +21,14 @@ pipeline {
                 stash(name: 'compiled-results', includes: 'sources/*.py*')
             }
         }
-        stage('Test') {
-            agent {
-                docker {
-                    //This image parameter downloads the qnib:pytest Docker image and runs this image as a
-                    //separate container. The pytest container becomes the agent that Jenkins uses to run the Test
-                    //stage of your Pipeline project.
-                    image 'qnib/pytest'
-                }
+       stage('Run Tests') {
+            steps {
+                sh '''
+                    source $VENV_DIR/bin/activate
+                    pytest tests/
+                '''
             }
+        }
             steps {
                 //This sh step executes pytest’s py.test command on sources/test_calc.py, which runs a set of
                 //unit tests (defined in test_calc.py) on the "calc" library’s add2 function.
